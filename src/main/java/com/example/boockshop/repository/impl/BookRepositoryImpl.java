@@ -1,7 +1,7 @@
-package com.example.spring_boot_intro.repository.impl;
+package com.example.boockshop.repository.impl;
 
-import com.example.spring_boot_intro.model.Book;
-import com.example.spring_boot_intro.repository.BookRepository;
+import com.example.boockshop.model.Book;
+import com.example.boockshop.repository.BookRepository;
 import java.util.List;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

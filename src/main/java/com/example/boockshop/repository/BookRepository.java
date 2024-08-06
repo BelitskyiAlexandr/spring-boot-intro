@@ -1,9 +1,10 @@
-package com.example.spring_boot_intro.repository;
+package com.example.boockshop.repository;
 
-import com.example.spring_boot_intro.model.Book;
+import com.example.boockshop.model.Book;
 import java.util.List;
 
 public interface BookRepository {
     Book save(Book book);
+
     List<Book> findAll();
 }

@@ -1,9 +1,10 @@
-package com.example.spring_boot_intro.service;
+package com.example.boockshop.service;
 
-import com.example.spring_boot_intro.model.Book;
+import com.example.boockshop.model.Book;
 import java.util.List;
 
 public interface BookService {
     Book save(Book book);
+
     List<Book> findAll();
 }

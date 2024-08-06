@@ -1,11 +1,9 @@
-package com.example.spring_boot_intro.service.impl;
+package com.example.boockshop.service.impl;
 
-import com.example.spring_boot_intro.model.Book;
-import com.example.spring_boot_intro.repository.BookRepository;
-import com.example.spring_boot_intro.repository.impl.BookRepositoryImpl;
-import com.example.spring_boot_intro.service.BookService;
+import com.example.boockshop.model.Book;
+import com.example.boockshop.repository.BookRepository;
+import com.example.boockshop.service.BookService;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
