@@ -1,7 +1,8 @@
-package com.example.boockshop.repository.impl;
+package com.example.bookshop.repository.impl;
 
-import com.example.boockshop.model.Book;
-import com.example.boockshop.repository.BookRepository;
+import com.example.bookshop.exception.DataProcessingException;
+import com.example.bookshop.model.Book;
+import com.example.bookshop.repository.BookRepository;
 import java.util.List;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -32,7 +33,7 @@ public class BookRepositoryImpl implements BookRepository {
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw new RuntimeException("Cannot add book into DB:" + book, e);
+            throw new DataProcessingException("Cannot add book into DB:" + book, e);
         } finally {
             if (session != null) {
                 session.close();
@@ -47,7 +48,7 @@ public class BookRepositoryImpl implements BookRepository {
             Query<Book> query = session.createQuery("from Book", Book.class);
             return query.getResultList();
         } catch (Exception e) {
-            throw new RuntimeException("Cannot get list of books", e);
+            throw new DataProcessingException("Cannot get list of books", e);
         }
     }
 }

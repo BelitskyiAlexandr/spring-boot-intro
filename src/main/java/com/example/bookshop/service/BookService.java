@@ -1,6 +1,6 @@
-package com.example.boockshop.service;
+package com.example.bookshop.service;
 
-import com.example.boockshop.model.Book;
+import com.example.bookshop.model.Book;
 import java.util.List;
 
 public interface BookService {
