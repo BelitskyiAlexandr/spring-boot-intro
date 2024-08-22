@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 @RequestMapping("/books")
 public class BookController {
-
     private final BookService bookService;
 
     @GetMapping

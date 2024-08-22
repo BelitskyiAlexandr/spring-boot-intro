@@ -1,6 +1,7 @@
 package com.example.bookshop.repository.impl;
 
 import com.example.bookshop.exception.DataProcessingException;
+import com.example.bookshop.exception.EntityNotFoundException;
 import com.example.bookshop.model.Book;
 import com.example.bookshop.repository.BookRepository;
 import java.util.List;
@@ -58,6 +59,8 @@ public class BookRepositoryImpl implements BookRepository {
         try (Session session = sessionFactory.openSession()) {
             Book book = session.get(Book.class, id);
             return Optional.ofNullable(book);
+        } catch (Exception e) {
+            throw new EntityNotFoundException("Book with id:" + id + " not found");
         }
     }
 }
