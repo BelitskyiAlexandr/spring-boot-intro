@@ -1,9 +1,11 @@
 package com.example.bookshop.repository.impl;
 
 import com.example.bookshop.exception.DataProcessingException;
+import com.example.bookshop.exception.EntityNotFoundException;
 import com.example.bookshop.model.Book;
 import com.example.bookshop.repository.BookRepository;
 import java.util.List;
+import java.util.Optional;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -49,6 +51,16 @@ public class BookRepositoryImpl implements BookRepository {
             return query.getResultList();
         } catch (Exception e) {
             throw new DataProcessingException("Cannot get list of books", e);
+        }
+    }
+
+    @Override
+    public Optional<Book> getBookById(Long id) {
+        try (Session session = sessionFactory.openSession()) {
+            Book book = session.get(Book.class, id);
+            return Optional.ofNullable(book);
+        } catch (Exception e) {
+            throw new EntityNotFoundException("Book with id:" + id + " not found");
         }
     }
 }
