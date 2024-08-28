@@ -5,6 +5,7 @@ import com.example.bookshop.dto.BookDto;
 import com.example.bookshop.dto.CreateBookRequestDto;
 import com.example.bookshop.model.Book;
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
 
 @Mapper(config = MapperConfig.class)
 public interface BookMapper {
@@ -12,29 +13,5 @@ public interface BookMapper {
 
     Book toModel(CreateBookRequestDto bookDto);
 
-    default Book updateBookFromDto(CreateBookRequestDto createBookRequestDto, Book book) {
-        if (book == null || createBookRequestDto == null) {
-            return null;
-        }
-        if (createBookRequestDto.getTitle() != null) {
-            book.setTitle(createBookRequestDto.getTitle());
-        }
-        if (createBookRequestDto.getAuthor() != null) {
-            book.setAuthor(createBookRequestDto.getAuthor());
-        }
-        if (createBookRequestDto.getIsbn() != null) {
-            book.setIsbn(createBookRequestDto.getIsbn());
-        }
-        if (createBookRequestDto.getPrice() != null) {
-            book.setPrice(createBookRequestDto.getPrice());
-        }
-        if (createBookRequestDto.getDescription() != null) {
-            book.setDescription(createBookRequestDto.getDescription());
-        }
-        if (createBookRequestDto.getCoverImage() != null) {
-            book.setCoverImage(createBookRequestDto.getCoverImage());
-        }
-
-        return book;
-    }
+    void updateBookFromDto(CreateBookRequestDto createBookRequestDto, @MappingTarget Book entity);
 }
