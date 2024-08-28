@@ -17,22 +17,22 @@ public interface BookMapper {
             return null;
         }
         if (createBookRequestDto.getTitle() != null) {
-            book.setTitle(book.getTitle());
+            book.setTitle(createBookRequestDto.getTitle());
         }
         if (createBookRequestDto.getAuthor() != null) {
-            book.setAuthor(book.getAuthor());
+            book.setAuthor(createBookRequestDto.getAuthor());
         }
         if (createBookRequestDto.getIsbn() != null) {
-            book.setIsbn(book.getIsbn());
+            book.setIsbn(createBookRequestDto.getIsbn());
         }
         if (createBookRequestDto.getPrice() != null) {
-            book.setPrice(book.getPrice());
+            book.setPrice(createBookRequestDto.getPrice());
         }
         if (createBookRequestDto.getDescription() != null) {
-            book.setDescription(book.getDescription());
+            book.setDescription(createBookRequestDto.getDescription());
         }
         if (createBookRequestDto.getCoverImage() != null) {
-            book.setCoverImage(book.getCoverImage());
+            book.setCoverImage(createBookRequestDto.getCoverImage());
         }
 
         return book;
