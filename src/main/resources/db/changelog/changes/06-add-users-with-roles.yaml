@@ -1,0 +1,59 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-users-with-roles
+      author: BelitskyiOleksandr
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: "admin@cool.admin"
+              - column:
+                  name: password
+                  value: "$2a$10$5neXP/tkJEgcEVfLSSD41eXRObEm6VWtrNzQnYwPVjTSxFYBH.jzW"
+              - column:
+                  name: first_name
+                  value: "Admin"
+              - column:
+                  name: last_name
+                  value: "Cool"
+              - column:
+                  name: is_deleted
+                  valueBoolean: false
+        - insert:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: user_id
+                  value: 1
+              - column:
+                  name: role_id
+                  value: 1
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: "user@regular.user"
+              - column:
+                  name: password
+                  value: "$2a$10$RkDx1b5I2U75upqf2YUzoOP7fSHqPbUgiF0zD6VhEpswiYR/ZuY9i"
+              - column:
+                  name: first_name
+                  value: "User"
+              - column:
+                  name: last_name
+                  value: "Regular"
+              - column:
+                  name: is_deleted
+                  valueBoolean: false
+        - insert:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: user_id
+                  value: 2
+              - column:
+                  name: role_id
+                  value: 2
