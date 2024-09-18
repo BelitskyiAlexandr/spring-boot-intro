@@ -25,21 +25,21 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-            return httpSecurity
-                    .cors(AbstractHttpConfigurer::disable)
-                    .csrf(AbstractHttpConfigurer::disable)
-                    .authorizeHttpRequests(
-                            auth -> auth
-                                    .requestMatchers("/auth/**", "/error",
-                                            "/swagger-ui/**", "/v3/api-docs/**")
-                                    .permitAll()
-                                    .anyRequest()
-                                    .authenticated()
-                    )
-                    .httpBasic(withDefaults())
-                    .sessionManagement(session ->
-                            session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                    .userDetailsService(userDetailsService)
-                    .build();
+        return httpSecurity
+                .cors(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(
+                        auth -> auth
+                                .requestMatchers("/auth/**", "/error",
+                                        "/swagger-ui/**", "/v3/api-docs/**")
+                                .permitAll()
+                                .anyRequest()
+                                .authenticated()
+                )
+                .httpBasic(withDefaults())
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .userDetailsService(userDetailsService)
+                .build();
     }
 }
