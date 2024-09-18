@@ -24,8 +24,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) {
-        try {
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
             return httpSecurity
                     .cors(AbstractHttpConfigurer::disable)
                     .csrf(AbstractHttpConfigurer::disable)
@@ -42,8 +41,5 @@ public class SecurityConfig {
                             session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .userDetailsService(userDetailsService)
                     .build();
-        } catch (Exception e) {
-            throw new RuntimeException("Authentication failed", e); //create new ex
-        }
     }
 }
