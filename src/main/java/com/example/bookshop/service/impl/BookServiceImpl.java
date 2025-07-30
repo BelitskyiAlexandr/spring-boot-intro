@@ -12,11 +12,9 @@ import com.example.bookshop.repository.book.BookRepository;
 import com.example.bookshop.repository.book.BookSpecificationBuilder;
 import com.example.bookshop.repository.category.CategoryRepository;
 import com.example.bookshop.service.BookService;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
