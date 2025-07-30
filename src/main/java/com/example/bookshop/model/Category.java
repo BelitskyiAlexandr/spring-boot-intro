@@ -26,5 +26,5 @@ public class Category {
     @ManyToMany(mappedBy = "categories")
     private Set<Book> books = new HashSet<>();
     @NotNull
-    private boolean is_deleted = false;
+    private boolean isDeleted = false;
 }
