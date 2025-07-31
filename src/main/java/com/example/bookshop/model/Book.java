@@ -44,7 +44,7 @@ public class Book {
     private boolean isDeleted;
     @ManyToMany
     @JoinTable(
-            name = "book_category",
+            name = "books_categories",
             joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     @ToString.Exclude

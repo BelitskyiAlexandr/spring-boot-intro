@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long>, JpaSpecificationExecutor<Book> {
 
-    @Query("SELECT b FROM Book b JOIN b.categories c WHERE c.id = :categoryId "
-            + "AND b.isDeleted = false")
+    @Query("SELECT b FROM Book b JOIN b.categories c WHERE c.id = :categoryId ")
     List<Book> findAllByCategoryId(@Param("categoryId")Long categoryId);
 }
