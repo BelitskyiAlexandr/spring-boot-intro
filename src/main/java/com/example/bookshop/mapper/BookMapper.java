@@ -7,7 +7,6 @@ import com.example.bookshop.dto.book.CreateBookRequestDto;
 import com.example.bookshop.model.Book;
 import com.example.bookshop.model.Category;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
@@ -28,7 +27,7 @@ public interface BookMapper {
             List<Long> ids = book.getCategories()
                     .stream()
                     .map(Category::getId)
-                    .collect(Collectors.toList());
+                    .toList();
             bookDto.setCategoryIds(ids);
         }
     }

@@ -2,6 +2,7 @@ package com.example.bookshop.controller;
 
 import com.example.bookshop.dto.book.BookDtoWithoutCategoryIds;
 import com.example.bookshop.dto.category.CategoryDto;
+import com.example.bookshop.dto.category.CreateCategoryRequestDto;
 import com.example.bookshop.mapper.BookMapper;
 import com.example.bookshop.service.BookService;
 import com.example.bookshop.service.CategoryService;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,20 +29,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class CategoryController {
     private final CategoryService categoryService;
-    private final BookMapper bookMapper;
     private final BookService bookService;
 
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create a category", description = "Create a new category")
-    public CategoryDto createCategory(@RequestBody @Valid CategoryDto categoryDto) {
-        return categoryService.save(categoryDto);
+    public CategoryDto createCategory(@RequestBody @Valid
+                                          CreateCategoryRequestDto createCategoryRequestDto) {
+        return categoryService.save(createCategoryRequestDto);
     }
 
     @GetMapping
     @Operation(summary = "Get all categories", description = "Get all available categories")
-    public List<CategoryDto> getAll(Pageable pageable) {
+    public Page<CategoryDto> getAll(Pageable pageable) {
         return categoryService.findAll(pageable);
     }
 

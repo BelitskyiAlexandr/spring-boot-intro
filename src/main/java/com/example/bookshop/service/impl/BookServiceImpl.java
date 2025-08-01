@@ -35,19 +35,6 @@ public class BookServiceImpl implements BookService {
         return bookMapper.toDto(bookRepository.save(book));
     }
 
-    private Set<Category> mapCategoryIdsToCategories(List<Long> categoryIds) {
-        if (categoryIds == null || categoryIds.isEmpty()) {
-            return Set.of();
-        }
-
-        List<Category> categories = categoryRepository.findAllById(categoryIds);
-        if (categories.size() != categoryIds.size()) {
-            throw new EntityNotFoundException("One or more categories not found");
-        }
-
-        return new HashSet<>(categories);
-    }
-
     @Override
     public List<BookDto> findAll(Pageable pageable) {
         return bookRepository.findAll(pageable).stream()
@@ -89,5 +76,18 @@ public class BookServiceImpl implements BookService {
         return bookRepository.findAllByCategoryId(id).stream()
                 .map(bookMapper::toDtoWithoutCategories)
                 .toList();
+    }
+
+    private Set<Category> mapCategoryIdsToCategories(List<Long> categoryIds) {
+        if (categoryIds == null || categoryIds.isEmpty()) {
+            return Set.of();
+        }
+
+        List<Category> categories = categoryRepository.findAllById(categoryIds);
+        if (categories.size() != categoryIds.size()) {
+            throw new EntityNotFoundException("One or more categories not found");
+        }
+
+        return new HashSet<>(categories);
     }
 }
