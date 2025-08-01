@@ -3,7 +3,6 @@ package com.example.bookshop.controller;
 import com.example.bookshop.dto.book.BookDtoWithoutCategoryIds;
 import com.example.bookshop.dto.category.CategoryDto;
 import com.example.bookshop.dto.category.CreateCategoryRequestDto;
-import com.example.bookshop.mapper.BookMapper;
 import com.example.bookshop.service.BookService;
 import com.example.bookshop.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
