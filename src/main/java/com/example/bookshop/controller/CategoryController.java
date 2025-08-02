@@ -55,9 +55,9 @@ public class CategoryController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Update category by id",
                 description = "Allow to update category's data by id")
-    public CategoryDto updateById(@PathVariable Long id,
-                                  @RequestBody @Valid CategoryDto categoryDto) {
-        return categoryService.updateById(id, categoryDto);
+    public CategoryDto updateById(@PathVariable Long id, @RequestBody @Valid
+                                            CreateCategoryRequestDto createCategoryRequestDto) {
+        return categoryService.updateById(id, createCategoryRequestDto);
     }
 
     @DeleteMapping("/{id}")

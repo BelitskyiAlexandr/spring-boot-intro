@@ -79,10 +79,6 @@ public class BookServiceImpl implements BookService {
     }
 
     private Set<Category> mapCategoryIdsToCategories(List<Long> categoryIds) {
-        if (categoryIds == null || categoryIds.isEmpty()) {
-            return Set.of();
-        }
-
         List<Category> categories = categoryRepository.findAllById(categoryIds);
         if (categories.size() != categoryIds.size()) {
             throw new EntityNotFoundException("One or more categories not found");
