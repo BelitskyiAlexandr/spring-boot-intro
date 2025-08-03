@@ -1,15 +1,20 @@
 package com.example.bookshop.service.impl;
 
 import com.example.bookshop.dto.book.BookDto;
+import com.example.bookshop.dto.book.BookDtoWithoutCategoryIds;
 import com.example.bookshop.dto.book.BookSearchParameters;
 import com.example.bookshop.dto.book.CreateBookRequestDto;
 import com.example.bookshop.exception.EntityNotFoundException;
 import com.example.bookshop.mapper.BookMapper;
 import com.example.bookshop.model.Book;
+import com.example.bookshop.model.Category;
 import com.example.bookshop.repository.book.BookRepository;
 import com.example.bookshop.repository.book.BookSpecificationBuilder;
+import com.example.bookshop.repository.category.CategoryRepository;
 import com.example.bookshop.service.BookService;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -21,10 +26,12 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
     private final BookSpecificationBuilder bookSpecificationBuilder;
+    private final CategoryRepository categoryRepository;
 
     @Override
-    public BookDto save(CreateBookRequestDto requestDto) {
-        Book book = bookMapper.toModel(requestDto);
+    public BookDto save(CreateBookRequestDto createBookRequestDto) {
+        Book book = bookMapper.toModel(createBookRequestDto);
+        book.setCategories(mapCategoryIdsToCategories(createBookRequestDto.getCategoryIds()));
         return bookMapper.toDto(bookRepository.save(book));
     }
 
@@ -47,6 +54,7 @@ public class BookServiceImpl implements BookService {
         Book book = bookRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("Cannot find book by id: " + id));
         bookMapper.updateBookFromDto(createBookRequestDto, book);
+        book.setCategories(mapCategoryIdsToCategories(createBookRequestDto.getCategoryIds()));
         return bookMapper.toDto(bookRepository.save(book));
     }
 
@@ -61,5 +69,21 @@ public class BookServiceImpl implements BookService {
         return bookRepository.findAll(bookSpecification, pageable).stream()
                 .map(bookMapper::toDto)
                 .toList();
+    }
+
+    @Override
+    public List<BookDtoWithoutCategoryIds> findAllByCategoryId(Long id) {
+        return bookRepository.findAllByCategoryId(id).stream()
+                .map(bookMapper::toDtoWithoutCategories)
+                .toList();
+    }
+
+    private Set<Category> mapCategoryIdsToCategories(List<Long> categoryIds) {
+        List<Category> categories = categoryRepository.findAllById(categoryIds);
+        if (categories.size() != categoryIds.size()) {
+            throw new EntityNotFoundException("One or more categories not found");
+        }
+
+        return new HashSet<>(categories);
     }
 }
