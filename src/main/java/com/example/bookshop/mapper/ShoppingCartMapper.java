@@ -1,0 +1,14 @@
+package com.example.bookshop.mapper;
+
+import com.example.bookshop.config.GlobalMapperConfig;
+import com.example.bookshop.dto.shoppingcart.ShoppingCartDto;
+import com.example.bookshop.model.ShoppingCart;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+
+@Mapper(config = GlobalMapperConfig.class)
+public interface ShoppingCartMapper {
+    @Mapping(target = "userId", source = "user.id")
+    @Mapping(target = "cartItems", source = "cartItems")
+    ShoppingCartDto toDto(ShoppingCart shoppingCart);
+}
