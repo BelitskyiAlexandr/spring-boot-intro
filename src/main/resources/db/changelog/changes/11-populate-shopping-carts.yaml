@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: 11-populate-shopping-carts
+      author: BelitskyiOleksandr
+      changes:
+        - sql:
+            dbms: mysql
+            splitStatements: false
+            stripComments: true
+            sql: |
+              INSERT INTO shopping_carts (id)
+              SELECT id FROM users WHERE is_deleted = 0;
