@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByEmail(String email);
 
-    @Query("SELECT u FROM User u JOIN FETCH u.roles WHERE u.email = :email")
+    @Query("SELECT u FROM User u JOIN FETCH u.roles WHERE u.email = :email AND u.isDeleted = "
+            + "false")
     Optional<User> findByEmailWithRoles(@Param("email") String email);
 }
