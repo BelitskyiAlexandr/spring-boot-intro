@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: 12-add-is-deleted-to-shopping-carts-and-cart-items
+      author: BelitskyiOleksandr
+      changes:
+        - addColumn:
+            tableName: shopping_carts
+            columns:
+              - column:
+                  name: is_deleted
+                  type: bit(1)
+                  constraints:
+                    nullable: false
+        - addColumn:
+            tableName: cart_items
+            columns:
+              - column:
+                  name: is_deleted
+                  type: bit(1)
+                  constraints:
+                    nullable: false

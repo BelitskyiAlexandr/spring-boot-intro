@@ -21,3 +21,5 @@ databaseChangeLog:
       file: db/changelog/changes/10-create-cart_items-table.yaml
   - include:
       file: db/changelog/changes/11-populate-shopping-carts.yaml
+  - include:
+      file: db/changelog/changes/12-add-is-deleted-to-shopping-carts-and-cart-items.yaml

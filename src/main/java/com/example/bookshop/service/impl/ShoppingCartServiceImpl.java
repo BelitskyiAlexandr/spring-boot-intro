@@ -7,6 +7,7 @@ import com.example.bookshop.mapper.ShoppingCartMapper;
 import com.example.bookshop.model.Book;
 import com.example.bookshop.model.CartItem;
 import com.example.bookshop.model.ShoppingCart;
+import com.example.bookshop.model.User;
 import com.example.bookshop.repository.book.BookRepository;
 import com.example.bookshop.repository.cartitem.CartItemRepository;
 import com.example.bookshop.repository.shoppingcart.ShoppingCartRepository;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ShoppingCartServiceImpl implements ShoppingCartService {
     private final ShoppingCartRepository shoppingCartRepository;
@@ -31,15 +33,15 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
-    @Transactional
     public ShoppingCartDto addBookToCart(Long userId, CartItemRequestDto cartItemRequestDto) {
         ShoppingCart shoppingCart = getShoppingCartByUserId(userId);
         Book book = bookRepository.findById(cartItemRequestDto.getBookId()).orElseThrow(() ->
                 new EntityNotFoundException("Book with id:" + cartItemRequestDto.getBookId()
                         + " not found"));
-        Optional<CartItem> existingItemOpt =
-                cartItemRepository.findByBookIdAndShoppingCartId(book.getId(),
-                                                                    shoppingCart.getId());
+
+        Optional<CartItem> existingItemOpt = shoppingCart.getCartItems().stream()
+                .filter(item -> item.getBook().getId().equals(book.getId()))
+                .findFirst();
 
         if (existingItemOpt.isPresent()) {
             CartItem existingItem = existingItemOpt.get();
@@ -52,17 +54,16 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             shoppingCart.getCartItems().add(newItem);
         }
 
-        ShoppingCart updated = shoppingCartRepository.save(shoppingCart);
-
-        return shoppingCartMapper.toDto(updated);
+        shoppingCartRepository.save(shoppingCart);
+        return shoppingCartMapper.toDto(shoppingCart);
     }
 
     @Override
-    @Transactional
-    public ShoppingCartDto updateCartItemQuantity(Long userId, Long cartItemId, Integer quantity) {
+    public ShoppingCartDto updateCartItemQuantity(Long userId, Long cartItemId,
+                                                  CartItemRequestDto cartItemRequestDto) {
         ShoppingCart shoppingCart = getShoppingCartByUserId(userId);
         CartItem cartItem = getCartItemByIdAndShoppingCartId(cartItemId, shoppingCart.getId());
-        cartItem.setQuantity(quantity);
+        cartItem.setQuantity(cartItemRequestDto.getQuantity());
         cartItemRepository.save(cartItem);
         return shoppingCartMapper.toDto(shoppingCart);
     }
@@ -72,6 +73,13 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         ShoppingCart shoppingCart = getShoppingCartByUserId(userId);
         CartItem cartItem = getCartItemByIdAndShoppingCartId(cartItemId, shoppingCart.getId());
         cartItemRepository.delete(cartItem);
+    }
+
+    @Override
+    public void createNewUserShoppingCart(User user) {
+        ShoppingCart shoppingCart = new ShoppingCart();
+        shoppingCart.setUser(user);
+        shoppingCartRepository.save(shoppingCart);
     }
 
     private ShoppingCart getShoppingCartByUserId(Long userId) {

@@ -7,6 +7,7 @@ import com.example.bookshop.service.ShoppingCartService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -24,6 +26,7 @@ public class ShoppingCartController {
     private final ShoppingCartService shoppingCartService;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Add Book to Cart", description = "Add a book to the shopping cart")
     public ShoppingCartDto addBookToCart(@AuthenticationPrincipal User user, @RequestBody
                                             @Valid CartItemRequestDto cartItemRequestDto) {
@@ -43,10 +46,11 @@ public class ShoppingCartController {
                                       @PathVariable Long cartItemId,
                                       @RequestBody @Valid CartItemRequestDto cartItemRequestDto) {
         return shoppingCartService.updateCartItemQuantity(user.getId(), cartItemId,
-                cartItemRequestDto.getQuantity());
+                cartItemRequestDto);
     }
 
     @DeleteMapping("/items/{cartItemId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Remove a book from Cart", description = "Remove a book from the "
             + "shopping cart")
     public void deleteCartItem(@AuthenticationPrincipal User user, @PathVariable Long cartItemId) {
