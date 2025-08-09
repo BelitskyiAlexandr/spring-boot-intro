@@ -6,17 +6,21 @@ import com.example.bookshop.exception.RegistrationException;
 import com.example.bookshop.mapper.UserMapper;
 import com.example.bookshop.model.User;
 import com.example.bookshop.repository.user.UserRepository;
+import com.example.bookshop.service.ShoppingCartService;
 import com.example.bookshop.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final ShoppingCartService shoppingCartService;
 
     @Override
     public UserResponseDto register(UserRegistrationRequestDto requestDto)
@@ -28,6 +32,8 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.toUserModel(requestDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
+        shoppingCartService.createNewUserShoppingCart(user);
+
         return userMapper.toUserResponseDto(user);
     }
 }
