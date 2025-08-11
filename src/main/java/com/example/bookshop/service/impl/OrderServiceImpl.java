@@ -14,15 +14,13 @@ import com.example.bookshop.model.ShoppingCart;
 import com.example.bookshop.model.Status;
 import com.example.bookshop.model.User;
 import com.example.bookshop.repository.order.OrderRepository;
-import com.example.bookshop.repository.orderItem.OrderItemRepository;
+import com.example.bookshop.repository.orderitem.OrderItemRepository;
 import com.example.bookshop.repository.shoppingcart.ShoppingCartRepository;
 import com.example.bookshop.service.OrderService;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

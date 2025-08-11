@@ -51,6 +51,6 @@ public class OrderController {
 
     @GetMapping("/{orderId}/items/{itemId}")
     public OrderItemDto getOrderItemById(@PathVariable Long orderId, @PathVariable Long itemId) {
-        return  orderService.getItemByOrderIdAndItemId(orderId, itemId);
+        return orderService.getItemByOrderIdAndItemId(orderId, itemId);
     }
 }
