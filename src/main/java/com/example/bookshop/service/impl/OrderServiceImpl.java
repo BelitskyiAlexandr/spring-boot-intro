@@ -92,7 +92,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Page<OrderItemDto> getItemsByOrderId(Long orderId, Pageable pageable) {
-        return orderItemRepository.findByOrderId(orderId).map(orderItemMapper::toDto);
+        return orderItemRepository.findByOrderId(orderId, pageable).map(orderItemMapper::toDto);
     }
 
     @Override
