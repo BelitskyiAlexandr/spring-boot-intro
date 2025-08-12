@@ -7,6 +7,7 @@ import com.example.bookshop.dto.status.StatusRequestDto;
 import com.example.bookshop.model.User;
 import com.example.bookshop.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,6 +24,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(
+        name = "Order API",
+        description = "Endpoints for managing orders"
+)
 @RestController
 @RequestMapping("/orders")
 @RequiredArgsConstructor

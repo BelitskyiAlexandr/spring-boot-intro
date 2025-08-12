@@ -5,6 +5,7 @@ import com.example.bookshop.dto.shoppingcart.ShoppingCartDto;
 import com.example.bookshop.model.User;
 import com.example.bookshop.service.ShoppingCartService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(
+        name = "ShoppingCart API",
+        description = "Endpoints for managing shopping cart"
+)
 @RestController
 @RequestMapping("/cart")
 @RequiredArgsConstructor
