@@ -52,38 +52,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDto createOrder(User user, OrderRequestDto orderRequestDto) {
-        ShoppingCart shoppingCart = shoppingCartRepository.findByUserId(user.getId()).orElseThrow(()
-                -> new EntityNotFoundException("ShoppingCart not found for user " + user.getId()));
-        if (shoppingCart.getCartItems().isEmpty()) {
-            throw new OrderProccessingException("Shopping cart is empty");
-        }
-        Order order = new Order();
-        order.setUser(shoppingCart.getUser());
-        order.setStatus(Status.PENDING);
-        order.setShippingAddress(orderRequestDto.getShippingAddress());
-        order.setOrderDate(LocalDateTime.now());
-        Set<OrderItem> orderItems = shoppingCart.getCartItems().stream()
-                .map(cartItem -> {
-                    OrderItem orderItem = new OrderItem();
-                    orderItem.setOrder(order);
-                    orderItem.setBook(cartItem.getBook());
-                    orderItem.setQuantity(cartItem.getQuantity());
-                    orderItem.setPrice(cartItem.getBook().getPrice());
-                    return orderItem;
-                })
-                .collect(Collectors.toSet());
-        order.setOrderItems(orderItems);
+        ShoppingCart shoppingCart = getShoppingCart(user.getId());
+        validateShoppingCartNotEmpty(shoppingCart);
 
-        BigDecimal total = BigDecimal.ZERO;
-        for (OrderItem item : orderItems) {
-            BigDecimal itemTotal = item.getPrice()
-                    .multiply(BigDecimal.valueOf(item.getQuantity()));
-            total = total.add(itemTotal);
-        }
-        order.setTotal(total);
+        Order order = buildOrderFromCart(shoppingCart, orderRequestDto);
+        calculateTotal(order);
 
-        shoppingCart.getCartItems().clear();
-        shoppingCartRepository.save(shoppingCart);
+        clearShoppingCart(shoppingCart);
 
         return orderMapper.toDto(orderRepository.save(order));
     }
@@ -96,5 +71,47 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderItemDto getItemByOrderIdAndItemId(Long orderId, Long itemId) {
         return orderItemMapper.toDto(orderItemRepository.findByOrderIdAndItemId(orderId, itemId));
+    }
+
+    private ShoppingCart getShoppingCart(Long userId) {
+        return shoppingCartRepository.findByUserId(userId)
+                .orElseThrow(() -> new EntityNotFoundException("ShoppingCart not found for user "
+                        + userId));
+    }
+
+    private void validateShoppingCartNotEmpty(ShoppingCart shoppingCart) {
+        if (shoppingCart.getCartItems().isEmpty()) {
+            throw new OrderProccessingException("Shopping cart is empty");
+        }
+    }
+
+    private Order buildOrderFromCart(ShoppingCart shoppingCart, OrderRequestDto orderRequestDto) {
+        Order order = new Order();
+        order.setUser(shoppingCart.getUser());
+        order.setStatus(Status.PENDING);
+        order.setShippingAddress(orderRequestDto.getShippingAddress());
+        order.setOrderDate(LocalDateTime.now());
+
+        Set<OrderItem> orderItems = shoppingCart.getCartItems().stream()
+                .map(cartItem -> orderItemMapper.toOrderItem(cartItem, order))
+                .collect(Collectors.toSet());
+
+        order.setOrderItems(orderItems);
+        return order;
+    }
+
+    private void calculateTotal(Order order) {
+        BigDecimal total = BigDecimal.ZERO;
+        for (OrderItem item : order.getOrderItems()) {
+            BigDecimal itemTotal = item.getPrice()
+                    .multiply(BigDecimal.valueOf(item.getQuantity()));
+            total = total.add(itemTotal);
+        }
+        order.setTotal(total);
+    }
+
+    private void clearShoppingCart(ShoppingCart shoppingCart) {
+        shoppingCart.getCartItems().clear();
+        shoppingCartRepository.save(shoppingCart);
     }
 }
