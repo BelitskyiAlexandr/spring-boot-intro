@@ -54,8 +54,8 @@ public class BookServiceTests {
     private BookServiceImpl bookService;
 
     @Test
-    @DisplayName("saveWithCorrectParams_ReturnSavedBook")
-    void save_CorrectParams_ReturnSavedBook() {
+    @DisplayName("save with valid params returns saved BookDto")
+    void save_CorrectParams_ReturnSavedBookDto() {
         String title = "Book";
         String author = "Author";
         BigDecimal price = BigDecimal.valueOf(100);
@@ -77,7 +77,7 @@ public class BookServiceTests {
     }
 
     @Test
-    @DisplayName("save_InvalidCategoryIds_ThrowEntityNotFoundException")
+    @DisplayName("save with invalid category IDs throws EntityNotFoundException")
     void save_InvalidCategoryIds_ThrowEntityNotFoundException() {
         String title = "Book";
         String author = "Author";
@@ -109,7 +109,7 @@ public class BookServiceTests {
     }
 
     @Test
-    @DisplayName("findById_CorrectId_returnBookDto")
+    @DisplayName("findById with valid ID returns BookDto")
     void findById_CorrectId_ReturnBookDto() {
         Long id = 1L;
         Book book = new Book();
@@ -123,7 +123,7 @@ public class BookServiceTests {
     }
 
     @Test
-    @DisplayName("findById_IncorrectId_ThrowEntityNotFoundException")
+    @DisplayName("findById with invalid ID throws EntityNotFoundException")
     void findById_IncorrectId_ThrowEntityNotFoundException() {
         Long id = 1L;
         when(bookRepository.findById(id)).thenReturn(Optional.empty());
@@ -132,7 +132,7 @@ public class BookServiceTests {
     }
 
     @Test
-    @DisplayName("findAll_CorrectParams_ReturnListOfBookDto")
+    @DisplayName("findAll with pageable params returns list of BookDto")
     void findAll_CorrectParams_ReturnListOfBookDto() {
         Pageable pageable = PageRequest.of(0, 10);
         List<Book> books = List.of(new Book());
@@ -147,17 +147,17 @@ public class BookServiceTests {
     }
 
     @Test
-    @DisplayName("deleteById_CorrectId_CalledBookRepositoryOnce")
+    @DisplayName("deleteById with valid ID calls BookRepository once")
     void deleteById_CorrectId_CalledBookRepositoryOnce() {
         Long id = 1L;
 
-        bookService.deleteById(1L);
+        bookService.deleteById(id);
 
         verify(bookRepository, times(1)).deleteById(id);
     }
 
     @Test
-    @DisplayName("updateById_CorrectId_ReturnBookDto")
+    @DisplayName("updateById with valid ID updates and returns BookDto")
     void updateById_CorrectId_ReturnBookDto() {
         Long id = 1L;
         Book existingBook = new Book();
@@ -196,8 +196,8 @@ public class BookServiceTests {
     }
 
     @Test
-    @DisplayName("updateById_IncorrectId_ThrowException")
-    void updateById_IncorrectId_ThrowException() {
+    @DisplayName("updateById with invalid ID throws EntityNotFoundException")
+    void updateById_IncorrectId_ThrowEntityNotFoundException() {
         Long id = 1L;
         CreateBookRequestDto createBookRequestDto = new CreateBookRequestDto();
         when(bookRepository.findById(id)).thenReturn(Optional.empty());
@@ -207,7 +207,7 @@ public class BookServiceTests {
     }
 
     @Test
-    @DisplayName("findAllByCategoryId_NonExistentCategoryId_ReturnEmptyList")
+    @DisplayName("findAllByCategoryId with non-existent category returns empty list")
     void findAllByCategoryId_NonExistentCategoryId_ReturnEmptyList() {
         Long id = 1L;
 
@@ -219,7 +219,7 @@ public class BookServiceTests {
     }
 
     @Test
-    @DisplayName("")
+    @DisplayName("search with valid params returns list of BookDto")
     void search_CorrectParams_ReturnListBookDto() {
         BookSearchParameters params = new BookSearchParameters(
                 new String[] {""},
