@@ -46,7 +46,7 @@ public class CategoryController {
 
     @GetMapping
     @Operation(summary = "Get all categories", description = "Get all available categories")
-    public Page<CategoryDto> getAll(Pageable pageable) {
+    public List<CategoryDto> getAll(Pageable pageable) {
         return categoryService.findAll(pageable);
     }
 
