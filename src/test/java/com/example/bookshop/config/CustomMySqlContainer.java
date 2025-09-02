@@ -14,7 +14,7 @@ public class CustomMySqlContainer extends MySQLContainer<CustomMySqlContainer> {
         if (customMySqlContainer == null) {
             customMySqlContainer = new CustomMySqlContainer();
         }
-        return  customMySqlContainer;
+        return customMySqlContainer;
     }
 
     @Override

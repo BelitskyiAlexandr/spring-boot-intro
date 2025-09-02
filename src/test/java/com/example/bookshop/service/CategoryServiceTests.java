@@ -1,5 +1,13 @@
 package com.example.bookshop.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.example.bookshop.dto.category.CategoryDto;
 import com.example.bookshop.dto.category.CreateCategoryRequestDto;
 import com.example.bookshop.exception.EntityNotFoundException;
@@ -7,6 +15,8 @@ import com.example.bookshop.mapper.CategoryMapper;
 import com.example.bookshop.model.Category;
 import com.example.bookshop.repository.category.CategoryRepository;
 import com.example.bookshop.service.impl.CategoryServiceImpl;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,17 +27,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class CategoryServiceTests {
@@ -99,12 +98,11 @@ public class CategoryServiceTests {
     void updateById_CorrectParams_ReturnUpdatedCategoryDto() {
         Long id = 1L;
         String oldName = "Old Category";
-        String newName = "Updated Category";
-
         Category existingCategory = new Category();
         existingCategory.setId(id);
         existingCategory.setName(oldName);
 
+        String newName = "Updated Category";
         Category updatedCategory = new Category();
         updatedCategory.setId(id);
         updatedCategory.setName(newName);

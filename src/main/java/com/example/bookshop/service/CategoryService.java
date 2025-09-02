@@ -2,8 +2,8 @@ package com.example.bookshop.service;
 
 import com.example.bookshop.dto.category.CategoryDto;
 import com.example.bookshop.dto.category.CreateCategoryRequestDto;
-import org.springframework.data.domain.Pageable;
 import java.util.List;
+import org.springframework.data.domain.Pageable;
 
 public interface CategoryService {
     CategoryDto save(CreateCategoryRequestDto createCategoryRequestDto);
