@@ -82,9 +82,9 @@ public class BookControllerTests {
     }
 
     @Test
-    @DisplayName("Should return List BookDtoS")
+    @DisplayName("GET /books return List<BookDto>")
     @WithMockUser
-    public void getAll_ReturnListOfBooksDto() throws Exception {
+    void getAll_ReturnListOfBookDto() throws Exception {
         List<BookDto> expected = new ArrayList<>();
         BookDto firstBook = getBookDto("Book 1", "Author 1", BigDecimal.valueOf(10.00));
         expected.add(firstBook);
@@ -105,15 +105,13 @@ public class BookControllerTests {
     @Test
     @DisplayName("GET /books/{id} should return single BookDto")
     @WithMockUser
-    public void getBookById_ReturnBookDto() throws Exception {
+    void getBookById_ReturnBookDto() throws Exception {
         MvcResult result = mockMvc.perform(get("/books/{id}", 1L))
                 .andExpect(status().isOk())
                 .andReturn();
 
         BookDto actual = objectMapper.readValue(
-                result.getResponse().getContentAsString(),
-                BookDto.class
-        );
+                result.getResponse().getContentAsString(), BookDto.class);
 
         assertNotNull(actual);
         assertEquals("Book 1", actual.getTitle());
@@ -123,7 +121,7 @@ public class BookControllerTests {
     @Test
     @DisplayName("GET /books/search should return filtered list (no params -> not empty)")
     @WithMockUser
-    public void searchBook_ReturnBookDtoList() throws Exception {
+    void searchBook_ReturnBookDtoList() throws Exception {
         MvcResult result = mockMvc.perform(get("/books/search"))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -140,7 +138,7 @@ public class BookControllerTests {
     @Test
     @DisplayName("POST /books should create a book (ROLE_ADMIN)")
     @WithMockUser(roles = "ADMIN")
-    public void createBook_returnBookDto() throws Exception {
+    void createBook_ReturnBookDto() throws Exception {
         CreateBookRequestDto request = getCreateBookRequestDto(BigDecimal.valueOf(99.99));
         String json = objectMapper.writeValueAsString(request);
 
@@ -163,7 +161,7 @@ public class BookControllerTests {
     @Test
     @DisplayName("PUT /books/{id} should update a book (ROLE_ADMIN)")
     @WithMockUser(roles = "ADMIN")
-    public void testUpdateBookById_shouldReturnUpdatedBookDto() throws Exception {
+    void updateBookById_ReturnUpdatedBookDto() throws Exception {
         CreateBookRequestDto request = getCreateBookRequestDto(BigDecimal.valueOf(55.55));
         request.setTitle("Updated Title");
         String json = objectMapper.writeValueAsString(request);
@@ -187,7 +185,7 @@ public class BookControllerTests {
     @Test
     @DisplayName("DELETE /books/{id} should return 204 (ROLE_ADMIN)")
     @WithMockUser(roles = "ADMIN")
-    public void testDeleteBookById_shouldReturnNoContent() throws Exception {
+    void deleteBookById_ReturnNoContent() throws Exception {
         mockMvc.perform(delete("/books/{id}", 1L)
                         .with(csrf()))
                 .andExpect(status().isNoContent());
