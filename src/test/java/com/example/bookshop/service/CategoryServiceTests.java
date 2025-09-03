@@ -43,11 +43,14 @@ public class CategoryServiceTests {
         Pageable pageable = PageRequest.of(0, 10);
         List<Category> categories = List.of(new Category());
         Page<Category> categoryPage = new PageImpl<>(categories, pageable, categories.size());
-        List<CategoryDto> expected = List.of(new CategoryDto());
+
+        CategoryDto categoryDto = new CategoryDto();
+        List<CategoryDto> categoryDtos = List.of(categoryDto);
+        Page<CategoryDto> expected = new PageImpl<>(categoryDtos, pageable, categoryDtos.size());
 
         when(categoryRepository.findAll(pageable)).thenReturn(categoryPage);
-        when(categoryMapper.toDto(any())).thenReturn(expected.get(0));
-        List<CategoryDto> actual = categoryService.findAll(pageable);
+        when(categoryMapper.toDto(any())).thenReturn(categoryDto);
+        Page<CategoryDto> actual = categoryService.findAll(pageable);
 
         assertEquals(expected, actual);
     }

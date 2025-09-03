@@ -2,8 +2,8 @@ package com.example.bookshop.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -14,12 +14,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.example.bookshop.dto.book.BookDto;
 import com.example.bookshop.dto.book.CreateBookRequestDto;
+import com.example.bookshop.util.TestUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.sql.DataSource;
 import lombok.SneakyThrows;
@@ -37,7 +37,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import org.testcontainers.shaded.org.apache.commons.lang3.builder.EqualsBuilder;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class BookControllerTests {
@@ -86,9 +85,11 @@ public class BookControllerTests {
     @WithMockUser
     void getAll_ReturnListOfBookDto() throws Exception {
         List<BookDto> expected = new ArrayList<>();
-        BookDto firstBook = getBookDto("Book 1", "Author 1", BigDecimal.valueOf(10.00));
+        BookDto firstBook = TestUtil.createBookDto("Book 1", "Author 1",
+                BigDecimal.valueOf(10.00));
         expected.add(firstBook);
-        BookDto secondBook = getBookDto("Book 2", "Author 2", BigDecimal.valueOf(20.00));
+        BookDto secondBook = TestUtil.createBookDto("Book 2", "Author 2",
+                BigDecimal.valueOf(20.00));
         expected.add(secondBook);
 
         MvcResult result = mockMvc.perform(get("/books"))
@@ -99,7 +100,14 @@ public class BookControllerTests {
 
         assertNotNull(actual);
         assertFalse(actual.isEmpty());
-        assertTrue(EqualsBuilder.reflectionEquals(expected, actual, "id"));
+        assertIterableEquals(
+                expected.stream().map(BookDto::getTitle).toList(),
+                actual.stream().map(BookDto::getTitle).toList()
+        );
+        assertIterableEquals(
+                expected.stream().map(BookDto::getAuthor).toList(),
+                actual.stream().map(BookDto::getAuthor).toList()
+        );
     }
 
     @Test
@@ -116,6 +124,14 @@ public class BookControllerTests {
         assertNotNull(actual);
         assertEquals("Book 1", actual.getTitle());
         assertEquals("Author 1", actual.getAuthor());
+    }
+
+    @Test
+    @DisplayName("GET /books/{id} when book doesn't exist should return 404")
+    @WithMockUser
+    void getBookById_NotFound() throws Exception {
+        mockMvc.perform(get("/books/{id}", 9999L))
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -139,7 +155,7 @@ public class BookControllerTests {
     @DisplayName("POST /books should create a book (ROLE_ADMIN)")
     @WithMockUser(roles = "ADMIN")
     void createBook_ReturnBookDto() throws Exception {
-        CreateBookRequestDto request = getCreateBookRequestDto(BigDecimal.valueOf(99.99));
+        CreateBookRequestDto request = TestUtil.createBookRequestDto(BigDecimal.valueOf(99.99));
         String json = objectMapper.writeValueAsString(request);
 
         MvcResult result = mockMvc.perform(post("/books")
@@ -159,10 +175,30 @@ public class BookControllerTests {
     }
 
     @Test
+    @DisplayName("POST /books with invalid body should return 400 (ROLE_ADMIN)")
+    @WithMockUser(roles = "ADMIN")
+    void createBook_InvalidBody_BadRequest() throws Exception {
+        CreateBookRequestDto invalid = new CreateBookRequestDto();
+        invalid.setTitle("");
+        invalid.setAuthor(null);
+        invalid.setIsbn("");
+        invalid.setPrice(BigDecimal.valueOf(-1));
+        invalid.setCategoryIds(List.of(1L));
+
+        String json = objectMapper.writeValueAsString(invalid);
+
+        mockMvc.perform(post("/books")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     @DisplayName("PUT /books/{id} should update a book (ROLE_ADMIN)")
     @WithMockUser(roles = "ADMIN")
     void updateBookById_ReturnUpdatedBookDto() throws Exception {
-        CreateBookRequestDto request = getCreateBookRequestDto(BigDecimal.valueOf(55.55));
+        CreateBookRequestDto request = TestUtil.createBookRequestDto(BigDecimal.valueOf(55.55));
         request.setTitle("Updated Title");
         String json = objectMapper.writeValueAsString(request);
 
@@ -183,30 +219,25 @@ public class BookControllerTests {
     }
 
     @Test
+    @DisplayName("PUT /books/{id} when book doesn't exist should return 404 (ROLE_ADMIN)")
+    @WithMockUser(roles = "ADMIN")
+    void updateBookById_NotFound() throws Exception {
+        CreateBookRequestDto request = TestUtil.createBookRequestDto(BigDecimal.valueOf(55.55));
+        String json = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(put("/books/{id}", 9999L)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     @DisplayName("DELETE /books/{id} should return 204 (ROLE_ADMIN)")
     @WithMockUser(roles = "ADMIN")
     void deleteBookById_ReturnNoContent() throws Exception {
         mockMvc.perform(delete("/books/{id}", 1L)
                         .with(csrf()))
                 .andExpect(status().isNoContent());
-    }
-
-    private BookDto getBookDto(String title, String author, BigDecimal price) {
-        BookDto bookDto = new BookDto();
-        bookDto.setTitle(title);
-        bookDto.setAuthor(author);
-        bookDto.setPrice(price);
-        bookDto.setCategoryIds(Collections.emptyList());
-        return bookDto;
-    }
-
-    private CreateBookRequestDto getCreateBookRequestDto(BigDecimal price) {
-        CreateBookRequestDto createBookRequestDto = new CreateBookRequestDto();
-        createBookRequestDto.setTitle("New Book");
-        createBookRequestDto.setAuthor("Author Name");
-        createBookRequestDto.setPrice(price);
-        createBookRequestDto.setIsbn("isbn");
-        createBookRequestDto.setCategoryIds(List.of(1L));
-        return createBookRequestDto;
     }
 }

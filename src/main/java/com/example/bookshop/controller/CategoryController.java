@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,7 +36,7 @@ public class CategoryController {
     private final BookService bookService;
 
     @PostMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create a category", description = "Create a new category")
     public CategoryDto createCategory(@RequestBody @Valid
@@ -45,7 +46,7 @@ public class CategoryController {
 
     @GetMapping
     @Operation(summary = "Get all categories", description = "Get all available categories")
-    public List<CategoryDto> getAll(Pageable pageable) {
+    public Page<CategoryDto> getAll(Pageable pageable) {
         return categoryService.findAll(pageable);
     }
 
@@ -56,7 +57,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update category by id",
                 description = "Allow to update category's data by id")
     public CategoryDto updateById(@PathVariable Long id, @RequestBody @Valid
@@ -65,7 +66,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete category by id", description = "Allow to delete category by id")
     public void deleteCategory(@PathVariable Long id) {

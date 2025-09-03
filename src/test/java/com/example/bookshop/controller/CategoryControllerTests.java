@@ -2,6 +2,7 @@ package com.example.bookshop.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -15,6 +16,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.example.bookshop.dto.book.BookDtoWithoutCategoryIds;
 import com.example.bookshop.dto.category.CategoryDto;
 import com.example.bookshop.dto.category.CreateCategoryRequestDto;
+import com.example.bookshop.util.TestUtil;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -36,7 +39,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import org.testcontainers.shaded.org.apache.commons.lang3.builder.EqualsBuilder;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class CategoryControllerTests {
@@ -82,22 +84,31 @@ public class CategoryControllerTests {
     @WithMockUser
     void getAll_ReturnListOfCategoryDto() throws Exception {
         List<CategoryDto> expected = new ArrayList<>();
-        CategoryDto firstCategoryDto = getCategoryDto("Category 1", "Category1");
+        CategoryDto firstCategoryDto = TestUtil.getCategoryDto("Category 1", "Category1");
         expected.add(firstCategoryDto);
-        CategoryDto secondCategoryDto = getCategoryDto("Category 2", "Category2");
+        CategoryDto secondCategoryDto = TestUtil.getCategoryDto("Category 2", "Category2");
         expected.add(secondCategoryDto);
 
         MvcResult result = mockMvc.perform(get("/categories"))
                 .andExpect(status().isOk())
                 .andReturn();
-        List<CategoryDto> actual =
-                objectMapper.readValue(result.getResponse().getContentAsString(),
-                        objectMapper.getTypeFactory().constructCollectionType(List.class,
-                                CategoryDto.class));
+
+        String body = result.getResponse().getContentAsString();
+
+        JsonNode root = objectMapper.readTree(body);
+        JsonNode content = root.get("content");
+
+        List<CategoryDto> actual = objectMapper.readValue(
+                content.traverse(),
+                objectMapper.getTypeFactory().constructCollectionType(List.class, CategoryDto.class)
+        );
 
         assertNotNull(actual);
         assertFalse(actual.isEmpty());
-        assertTrue(EqualsBuilder.reflectionEquals(expected, actual, "id"));
+        assertIterableEquals(
+                expected.stream().map(CategoryDto::getName).toList(),
+                actual.stream().map(CategoryDto::getName).toList()
+        );
     }
 
     @Test
@@ -116,11 +127,19 @@ public class CategoryControllerTests {
     }
 
     @Test
+    @DisplayName("GET /categories/{id} when not found should return 404")
+    @WithMockUser
+    void getCategoryById_NotFound() throws Exception {
+        mockMvc.perform(get("/categories/{id}", 9999L))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     @DisplayName("POST /categories should create a category (ROLE_ADMIN)")
     @WithMockUser(roles = "ADMIN")
     void createCategory_ReturnCategoryDto() throws Exception {
-        CreateCategoryRequestDto request =
-                getCreateCategoryRequestDto("Category 1", "New");
+        CreateCategoryRequestDto request = TestUtil
+                        .getCreateCategoryRequestDto("Category 1", "New");
         String json = objectMapper.writeValueAsString(request);
 
         MvcResult result = mockMvc.perform(post("/categories")
@@ -139,11 +158,28 @@ public class CategoryControllerTests {
     }
 
     @Test
+    @DisplayName("POST /categories with invalid body should return 400 (ROLE_ADMIN)")
+    @WithMockUser(roles = "ADMIN")
+    void createCategory_InvalidBody_BadRequest() throws Exception {
+        CreateCategoryRequestDto invalid = new CreateCategoryRequestDto();
+        invalid.setName("");
+        invalid.setDescription("");
+
+        String json = objectMapper.writeValueAsString(invalid);
+
+        mockMvc.perform(post("/categories")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     @DisplayName("PUT /categories/{id} should update a book (ROLE_ADMIN)")
     @WithMockUser(roles = "ADMIN")
     void updateCategoryById_ReturnUpdatedCategoryDto() throws Exception {
-        CreateCategoryRequestDto request =
-                getCreateCategoryRequestDto("Category", "New");
+        CreateCategoryRequestDto request = TestUtil
+                .getCreateCategoryRequestDto("Category", "New");
         String json = objectMapper.writeValueAsString(request);
 
         MvcResult result = mockMvc.perform(put("/categories/{id}", 1L)
@@ -159,6 +195,37 @@ public class CategoryControllerTests {
         assertNotNull(updated);
         assertEquals(request.getName(), updated.getName());
         assertEquals(request.getDescription(), updated.getDescription());
+    }
+
+    @Test
+    @DisplayName("PUT /categories/{id} with invalid body should return 400 (ROLE_ADMIN)")
+    @WithMockUser(roles = "ADMIN")
+    void updateCategoryById_InvalidBody_BadRequest() throws Exception {
+        CreateCategoryRequestDto invalid = new CreateCategoryRequestDto();
+        invalid.setName("");
+        invalid.setDescription("");
+
+        String json = objectMapper.writeValueAsString(invalid);
+
+        mockMvc.perform(put("/categories/{id}", 1L)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("PUT /categories/{id} when not found should return 404 (ROLE_ADMIN)")
+    @WithMockUser(roles = "ADMIN")
+    void updateCategoryById_NotFound() throws Exception {
+        CreateCategoryRequestDto request = TestUtil.getCreateCategoryRequestDto("Any", "Desc");
+        String json = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(put("/categories/{id}", 9999L)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -192,19 +259,5 @@ public class CategoryControllerTests {
                 .toList();
         assertTrue(titles.contains("Book 1"));
         assertTrue(titles.contains("Book 2"));
-    }
-
-    private CreateCategoryRequestDto getCreateCategoryRequestDto(String name, String description) {
-        CreateCategoryRequestDto requestDto = new CreateCategoryRequestDto();
-        requestDto.setName(name);
-        requestDto.setDescription(description);
-        return requestDto;
-    }
-
-    private CategoryDto getCategoryDto(String name, String description) {
-        CategoryDto categoryDto = new CategoryDto();
-        categoryDto.setName(name);
-        categoryDto.setDescription(description);
-        return categoryDto;
     }
 }
