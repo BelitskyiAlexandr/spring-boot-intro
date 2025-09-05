@@ -114,16 +114,22 @@ public class BookControllerTests {
     @DisplayName("GET /books/{id} should return single BookDto")
     @WithMockUser
     void getBookById_ReturnBookDto() throws Exception {
+        BookDto expected = TestUtil.createBookDto("Book 1", "Author 1", BigDecimal.valueOf(10.00));
+        expected.setId(1L);
+
+        // when
         MvcResult result = mockMvc.perform(get("/books/{id}", 1L))
                 .andExpect(status().isOk())
                 .andReturn();
 
         BookDto actual = objectMapper.readValue(
-                result.getResponse().getContentAsString(), BookDto.class);
+                result.getResponse().getContentAsString(),
+                BookDto.class
+        );
 
         assertNotNull(actual);
-        assertEquals("Book 1", actual.getTitle());
-        assertEquals("Author 1", actual.getAuthor());
+        assertEquals(expected.getTitle(), actual.getTitle());
+        assertEquals(expected.getAuthor(), actual.getAuthor());
     }
 
     @Test
@@ -155,8 +161,8 @@ public class BookControllerTests {
     @DisplayName("POST /books should create a book (ROLE_ADMIN)")
     @WithMockUser(roles = "ADMIN")
     void createBook_ReturnBookDto() throws Exception {
-        CreateBookRequestDto request = TestUtil.createBookRequestDto(BigDecimal.valueOf(99.99));
-        String json = objectMapper.writeValueAsString(request);
+        CreateBookRequestDto expected = TestUtil.createBookRequestDto(BigDecimal.valueOf(99.99));
+        String json = objectMapper.writeValueAsString(expected);
 
         MvcResult result = mockMvc.perform(post("/books")
                         .with(csrf())
@@ -165,13 +171,13 @@ public class BookControllerTests {
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        BookDto created = objectMapper.readValue(
+        BookDto actual = objectMapper.readValue(
                 result.getResponse().getContentAsString(), BookDto.class);
 
-        assertNotNull(created);
-        assertEquals(request.getTitle(), created.getTitle());
-        assertEquals(request.getAuthor(), created.getAuthor());
-        assertEquals(request.getPrice(), created.getPrice());
+        assertNotNull(actual);
+        assertEquals(expected.getTitle(), actual.getTitle());
+        assertEquals(expected.getAuthor(), actual.getAuthor());
+        assertEquals(expected.getPrice(), actual.getPrice());
     }
 
     @Test
@@ -198,9 +204,9 @@ public class BookControllerTests {
     @DisplayName("PUT /books/{id} should update a book (ROLE_ADMIN)")
     @WithMockUser(roles = "ADMIN")
     void updateBookById_ReturnUpdatedBookDto() throws Exception {
-        CreateBookRequestDto request = TestUtil.createBookRequestDto(BigDecimal.valueOf(55.55));
-        request.setTitle("Updated Title");
-        String json = objectMapper.writeValueAsString(request);
+        CreateBookRequestDto expected = TestUtil.createBookRequestDto(BigDecimal.valueOf(55.55));
+        expected.setTitle("Updated Title");
+        String json = objectMapper.writeValueAsString(expected);
 
         MvcResult result = mockMvc.perform(put("/books/{id}", 1L)
                         .with(csrf())
@@ -209,13 +215,13 @@ public class BookControllerTests {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        BookDto updated = objectMapper.readValue(
+        BookDto actual = objectMapper.readValue(
                 result.getResponse().getContentAsString(), BookDto.class);
 
-        assertNotNull(updated);
-        assertEquals("Updated Title", updated.getTitle());
-        assertEquals(request.getAuthor(), updated.getAuthor());
-        assertEquals(request.getPrice(), updated.getPrice());
+        assertNotNull(actual);
+        assertEquals(expected.getTitle(), actual.getTitle());
+        assertEquals(expected.getAuthor(), actual.getAuthor());
+        assertEquals(expected.getPrice(), actual.getPrice());
     }
 
     @Test

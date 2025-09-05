@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -152,7 +151,7 @@ public class BookServiceTests {
 
         bookService.deleteById(id);
 
-        verify(bookRepository, times(1)).deleteById(id);
+        verify(bookRepository).deleteById(id);
     }
 
     @Test
@@ -189,8 +188,8 @@ public class BookServiceTests {
         BookDto actual = bookService.updateById(id, updateDto);
 
         assertEquals(expected, actual);
-        verify(bookRepository, times(1)).findById(id);
-        verify(bookRepository, times(1)).save(existingBook);
+        verify(bookRepository).findById(id);
+        verify(bookRepository).save(existingBook);
         verify(bookMapper).updateBookFromDto(updateDto, existingBook);
     }
 
@@ -214,7 +213,7 @@ public class BookServiceTests {
         List<BookDtoWithoutCategoryIds> actual = bookService.findAllByCategoryId(id);
 
         assertTrue(actual.isEmpty());
-        verify(bookRepository, times(1)).findAllByCategoryId(id);
+        verify(bookRepository).findAllByCategoryId(id);
     }
 
     @Test
@@ -228,29 +227,29 @@ public class BookServiceTests {
 
         Specification<Book> specification = (root, query, cb) -> null;
 
-        Book book1 = getBook("Book1", "Author1", BigDecimal.valueOf(100), "isbn1");
-        Book book2 = getBook("Book2", "Author2", BigDecimal.valueOf(200), "isbn2");
+        Book firstBook = getBook("Book1", "Author1", BigDecimal.valueOf(100), "isbn1");
+        Book secondBook = getBook("Book2", "Author2", BigDecimal.valueOf(200), "isbn2");
 
-        BookDto dto1 = getBookDto("Book1", "Author1",
+        BookDto firstBookDto = getBookDto("Book1", "Author1",
                 BigDecimal.valueOf(100), "isbn1", Collections.emptyList());
-        BookDto dto2 = getBookDto("Book2", "Author2",
+        BookDto secondBookDto = getBookDto("Book2", "Author2",
                 BigDecimal.valueOf(200), "isbn2", Collections.emptyList());
 
         when(bookSpecificationBuilder.build(params)).thenReturn(specification);
         when(bookRepository.findAll(specification, pageable))
-                .thenReturn(new PageImpl<>(List.of(book1, book2)));
-        when(bookMapper.toDto(book1)).thenReturn(dto1);
-        when(bookMapper.toDto(book2)).thenReturn(dto2);
+                .thenReturn(new PageImpl<>(List.of(firstBook, secondBook)));
+        when(bookMapper.toDto(firstBook)).thenReturn(firstBookDto);
+        when(bookMapper.toDto(secondBook)).thenReturn(secondBookDto);
 
         List<BookDto> result = bookService.search(params, pageable);
 
         assertEquals(2, result.size());
-        assertTrue(result.containsAll(List.of(dto1, dto2)));
+        assertTrue(result.containsAll(List.of(firstBookDto, secondBookDto)));
 
         verify(bookSpecificationBuilder).build(params);
         verify(bookRepository).findAll(specification, pageable);
-        verify(bookMapper).toDto(book1);
-        verify(bookMapper).toDto(book2);
+        verify(bookMapper).toDto(firstBook);
+        verify(bookMapper).toDto(secondBook);
     }
 
     private BookDto getBookDto(String title, String author, BigDecimal price, String isbn,

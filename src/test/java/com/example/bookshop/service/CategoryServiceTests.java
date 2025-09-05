@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -67,7 +66,7 @@ public class CategoryServiceTests {
         CategoryDto actual = categoryService.findById(id);
 
         assertEquals(expected, actual);
-        verify(categoryRepository, times(1)).findById(id);
+        verify(categoryRepository).findById(id);
     }
 
     @Test
@@ -93,7 +92,7 @@ public class CategoryServiceTests {
         CategoryDto actual = categoryService.save(createCategoryRequestDto);
 
         assertEquals(expected, actual);
-        verify(categoryRepository, times(1)).save(category);
+        verify(categoryRepository).save(category);
     }
 
     @Test
@@ -125,8 +124,8 @@ public class CategoryServiceTests {
 
         CategoryDto actual = categoryService.updateById(id, createCategoryRequestDto);
         assertEquals(expected, actual);
-        verify(categoryRepository, times(1)).findById(id);
-        verify(categoryRepository, times(1)).save(existingCategory);
+        verify(categoryRepository).findById(id);
+        verify(categoryRepository).save(existingCategory);
     }
 
     @Test
@@ -136,6 +135,6 @@ public class CategoryServiceTests {
 
         categoryService.deleteById(id);
 
-        verify(categoryRepository, times(1)).deleteById(id);
+        verify(categoryRepository).deleteById(id);
     }
 }
