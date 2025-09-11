@@ -149,12 +149,16 @@ public class CategoryControllerTests {
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        CategoryDto created = objectMapper.readValue(
-                result.getResponse().getContentAsString(), CategoryDto.class);
+        CategoryDto expected = new CategoryDto();
+        expected.setName(request.getName());
+        expected.setDescription(request.getDescription());
 
-        assertNotNull(created);
-        assertEquals(request.getName(), created.getName());
-        assertEquals(request.getDescription(), created.getDescription());
+        CategoryDto actual = objectMapper.readValue(
+                result.getResponse().getContentAsString(), CategoryDto.class
+        );
+
+        assertNotNull(actual);
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -189,12 +193,16 @@ public class CategoryControllerTests {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        CategoryDto updated = objectMapper.readValue(
-                result.getResponse().getContentAsString(), CategoryDto.class);
+        CategoryDto expected = new CategoryDto();
+        expected.setName(request.getName());
+        expected.setDescription(request.getDescription());
 
-        assertNotNull(updated);
-        assertEquals(request.getName(), updated.getName());
-        assertEquals(request.getDescription(), updated.getDescription());
+        CategoryDto actual = objectMapper.readValue(
+                result.getResponse().getContentAsString(), CategoryDto.class
+        );
+
+        assertNotNull(actual);
+        assertEquals(expected, actual);
     }
 
     @Test
