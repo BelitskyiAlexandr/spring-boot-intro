@@ -36,7 +36,7 @@ public class CategoryController {
     private final BookService bookService;
 
     @PostMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create a category", description = "Create a new category")
     public CategoryDto createCategory(@RequestBody @Valid
@@ -57,7 +57,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update category by id",
                 description = "Allow to update category's data by id")
     public CategoryDto updateById(@PathVariable Long id, @RequestBody @Valid
@@ -66,7 +66,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete category by id", description = "Allow to delete category by id")
     public void deleteCategory(@PathVariable Long id) {
