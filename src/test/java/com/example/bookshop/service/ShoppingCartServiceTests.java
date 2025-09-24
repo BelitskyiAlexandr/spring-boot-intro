@@ -80,17 +80,16 @@ class ShoppingCartServiceTests {
         Long bookId = 1L;
         int addQty = 3;
 
-        ShoppingCart cart = testCart(userId, bookId, 2);
-        Book book = testBook(bookId, "Book 1");
-
         CartItemRequestDto request = new CartItemRequestDto();
         request.setBookId(bookId);
         request.setQuantity(addQty);
 
+        ShoppingCart cart = testCart(userId, bookId, 2);
         ShoppingCartDto expected = new ShoppingCartDto();
         expected.setId(cart.getId());
         expected.setUserId(userId);
 
+        Book book = testBook(bookId, "Book 1");
         when(shoppingCartRepository.findByUserId(userId)).thenReturn(Optional.of(cart));
         when(bookRepository.findById(bookId)).thenReturn(Optional.of(book));
         when(shoppingCartRepository.save(cart)).thenReturn(cart);
@@ -115,30 +114,27 @@ class ShoppingCartServiceTests {
         Long bookId = 10L;
         int addQty = 2;
 
-        // cart has no items
-        ShoppingCart cart = emptyCart(userId);
-        Book book = testBook(bookId, "New Book");
-
         CartItemRequestDto request = new CartItemRequestDto();
         request.setBookId(bookId);
         request.setQuantity(addQty);
 
+        ShoppingCart cart = emptyCart(userId);
         ShoppingCartDto expected = new ShoppingCartDto();
         expected.setId(cart.getId());
         expected.setUserId(userId);
 
+        Book book = testBook(bookId, "New Book");
         when(shoppingCartRepository.findByUserId(userId)).thenReturn(Optional.of(cart));
         when(bookRepository.findById(bookId)).thenReturn(Optional.of(book));
         when(shoppingCartRepository.save(cart)).thenReturn(cart);
         when(shoppingCartMapper.toDto(cart)).thenReturn(expected);
 
         ShoppingCartDto actual = shoppingCartService.addBookToCart(userId, request);
-
         assertEquals(1, cart.getCartItems().size());
         CartItem created = cart.getCartItems().iterator().next();
+        assertEquals(expected, actual);
         assertEquals(bookId, created.getBook().getId());
         assertEquals(addQty, created.getQuantity());
-        assertEquals(expected, actual);
 
         verify(shoppingCartRepository).findByUserId(userId);
         verify(bookRepository).findById(bookId);
@@ -209,14 +205,13 @@ class ShoppingCartServiceTests {
     @DisplayName("When cart item not found -> throws EntityNotFoundException")
     void updateCartItemQuantity_ItemNotFound_Throws() {
         Long userId = 3L;
-        Long cartItemId = 100L;
-
         ShoppingCart cart = emptyCart(userId);
 
         CartItemRequestDto req = new CartItemRequestDto();
         req.setBookId(1L);
         req.setQuantity(5);
 
+        Long cartItemId = 100L;
         when(shoppingCartRepository.findByUserId(userId)).thenReturn(Optional.of(cart));
         when(cartItemRepository.findByIdAndShoppingCartId(cartItemId, cart.getId()))
                 .thenReturn(Optional.empty());
