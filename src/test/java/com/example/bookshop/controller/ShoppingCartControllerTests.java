@@ -191,11 +191,11 @@ class ShoppingCartControllerTests {
     }
 
     private UsernamePasswordAuthenticationToken authAsUserId(Long userId, String email) {
-        User u = new User();
-        u.setId(userId);
-        u.setEmail(email);
-        u.setPassword("pwd");
-        u.setRoles(Set.<Role>of());
-        return new UsernamePasswordAuthenticationToken(u, null, u.getAuthorities());
+        User user = new User();
+        user.setId(userId);
+        user.setEmail(email);
+        user.setPassword("pwd");
+        user.setRoles(Set.<Role>of());
+        return new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
     }
 }

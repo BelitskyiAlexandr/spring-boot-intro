@@ -1,5 +1,7 @@
 package com.example.bookshop.service;
 
+import static com.example.bookshop.util.TestUtil.createBook;
+import static com.example.bookshop.util.TestUtil.emptyCart;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
@@ -12,13 +14,11 @@ import com.example.bookshop.mapper.ShoppingCartMapper;
 import com.example.bookshop.model.Book;
 import com.example.bookshop.model.CartItem;
 import com.example.bookshop.model.ShoppingCart;
-import com.example.bookshop.model.User;
 import com.example.bookshop.repository.book.BookRepository;
 import com.example.bookshop.repository.cartitem.CartItemRepository;
 import com.example.bookshop.repository.shoppingcart.ShoppingCartRepository;
 import com.example.bookshop.service.impl.ShoppingCartServiceImpl;
 import java.math.BigDecimal;
-import java.util.HashSet;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -89,7 +89,7 @@ class ShoppingCartServiceTests {
         expected.setId(cart.getId());
         expected.setUserId(userId);
 
-        Book book = testBook(bookId, "Book 1");
+        Book book = createBook(bookId, "Book 1", "Author 1", BigDecimal.valueOf(20));
         when(shoppingCartRepository.findByUserId(userId)).thenReturn(Optional.of(cart));
         when(bookRepository.findById(bookId)).thenReturn(Optional.of(book));
         when(shoppingCartRepository.save(cart)).thenReturn(cart);
@@ -123,7 +123,7 @@ class ShoppingCartServiceTests {
         expected.setId(cart.getId());
         expected.setUserId(userId);
 
-        Book book = testBook(bookId, "New Book");
+        Book book = createBook(bookId, "New Book", "Author 1", BigDecimal.valueOf(20));
         when(shoppingCartRepository.findByUserId(userId)).thenReturn(Optional.of(cart));
         when(bookRepository.findById(bookId)).thenReturn(Optional.of(book));
         when(shoppingCartRepository.save(cart)).thenReturn(cart);
@@ -171,7 +171,7 @@ class ShoppingCartServiceTests {
         CartItem item = new CartItem();
         item.setId(cartItemId);
         item.setShoppingCart(cart);
-        item.setBook(testBook(1L, "Book 1"));
+        item.setBook(createBook(1L, "Book 1", "Author 1", BigDecimal.valueOf(20)));
         item.setQuantity(2);
         cart.getCartItems().add(item);
 
@@ -223,33 +223,14 @@ class ShoppingCartServiceTests {
         verify(cartItemRepository).findByIdAndShoppingCartId(cartItemId, cart.getId());
     }
 
-    private ShoppingCart emptyCart(Long userId) {
-        ShoppingCart cart = new ShoppingCart();
-        cart.setId(userId);
-        User u = new User();
-        u.setId(userId);
-        cart.setUser(u);
-        cart.setCartItems(new HashSet<>());
-        return cart;
-    }
-
     private ShoppingCart testCart(Long userId, Long bookId, int qty) {
         ShoppingCart cart = emptyCart(userId);
         CartItem item = new CartItem();
         item.setId(1L);
         item.setShoppingCart(cart);
-        item.setBook(testBook(bookId, "Book " + bookId));
+        item.setBook(createBook(bookId, "Book " + bookId, "Author 1", BigDecimal.valueOf(20)));
         item.setQuantity(qty);
         cart.getCartItems().add(item);
         return cart;
-    }
-
-    private Book testBook(Long id, String title) {
-        Book b = new Book();
-        b.setId(id);
-        b.setTitle(title);
-        b.setAuthor("Author");
-        b.setPrice(BigDecimal.valueOf(10));
-        return b;
     }
 }

@@ -1,18 +1,13 @@
 package com.example.bookshop.repository;
 
+import static com.example.bookshop.util.TestUtil.getShoppingCart;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.example.bookshop.model.Book;
-import com.example.bookshop.model.CartItem;
 import com.example.bookshop.model.ShoppingCart;
-import com.example.bookshop.model.User;
 import com.example.bookshop.repository.shoppingcart.ShoppingCartRepository;
-import java.math.BigDecimal;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,46 +78,5 @@ public class ShoppingCartRepositoryTests {
         Optional<ShoppingCart> result = shoppingCartRepository.findByUserId(nonExistingUserId);
 
         assertTrue(result.isEmpty());
-    }
-
-    private ShoppingCart getShoppingCart() {
-        ShoppingCart shoppingCart = new ShoppingCart();
-        shoppingCart.setId(3L);
-        User user = createTestUser();
-        shoppingCart.setUser(user);
-        Set<CartItem> cartItemSet = new HashSet<>();
-        CartItem cartItem = createCartItem();
-        cartItem.setShoppingCart(shoppingCart);
-        cartItemSet.add(cartItem);
-        shoppingCart.setCartItems(cartItemSet);
-        return shoppingCart;
-    }
-
-    private User createTestUser() {
-        User user = new User();
-        user.setId(3L);
-        user.setFirstName("John");
-        user.setLastName("Doe");
-        user.setShippingAddress("Address 1");
-        user.setPassword("password1");
-        user.setEmail("user1@example.com");
-        return user;
-    }
-
-    private CartItem createCartItem() {
-        CartItem cartItem = new CartItem();
-        cartItem.setId(1L);
-        cartItem.setBook(createBook());
-        cartItem.setQuantity(2);
-        return cartItem;
-    }
-
-    private Book createBook() {
-        Book book = new Book();
-        book.setId(1L);
-        book.setTitle("Book 1");
-        book.setAuthor("Author 1");
-        book.setPrice(BigDecimal.valueOf(20));
-        return book;
     }
 }
