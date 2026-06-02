@@ -1,0 +1,158 @@
+databaseChangeLog:
+  - changeSet:
+      id: 15-add-demo-data
+      author: BelitskyiAlexandr
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 100
+              - column:
+                  name: email
+                  value: "admin123@test.com"
+              - column:
+                  name: password
+                  value: "$2a$10$eoW0CN.OIMYdJe4UF4ONSeEXXkvuxq.qCCW6V3QQl8W5L766tSBw6"
+              - column:
+                  name: first_name
+                  value: "Second"
+              - column:
+                  name: last_name
+                  value: "Admin"
+              - column:
+                  name: shipping_address
+                  value: "Test"
+              - column:
+                  name: is_deleted
+                  valueBoolean: false
+        - insert:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: user_id
+                  valueNumeric: 100
+              - column:
+                  name: role_id
+                  valueNumeric: 1
+        - insert:
+            tableName: shopping_carts
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 100
+              - column:
+                  name: is_deleted
+                  valueBoolean: false
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 100
+              - column:
+                  name: name
+                  value: "Programming"
+              - column:
+                  name: description
+                  value: "Books about programming"
+              - column:
+                  name: is_deleted
+                  valueBoolean: false
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 101
+              - column:
+                  name: name
+                  value: "Software Engineering"
+              - column:
+                  name: description
+                  value: "Books about software engineering"
+              - column:
+                  name: is_deleted
+                  valueBoolean: false
+        - insert:
+            tableName: books
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 100
+              - column:
+                  name: title
+                  value: "Clean Code"
+              - column:
+                  name: author
+                  value: "Robert C. Martin"
+              - column:
+                  name: isbn
+                  value: "9780132350884"
+              - column:
+                  name: price
+                  valueNumeric: 40
+              - column:
+                  name: description
+                  value: "Book about writing clean code"
+              - column:
+                  name: cover_image
+                  value: "https://example.com/clean-code.jpg"
+              - column:
+                  name: is_deleted
+                  valueBoolean: false
+        - insert:
+            tableName: books
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 101
+              - column:
+                  name: title
+                  value: "Effective Java"
+              - column:
+                  name: author
+                  value: "Joshua Bloch"
+              - column:
+                  name: isbn
+                  value: "9780134685991"
+              - column:
+                  name: price
+                  valueNumeric: 45
+              - column:
+                  name: description
+                  value: "Best practices for Java programming"
+              - column:
+                  name: cover_image
+                  value: "https://example.com/effective-java.jpg"
+              - column:
+                  name: is_deleted
+                  valueBoolean: false
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueNumeric: 100
+              - column:
+                  name: category_id
+                  valueNumeric: 100
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueNumeric: 101
+              - column:
+                  name: category_id
+                  valueNumeric: 100
+        - insert:
+            tableName: books_categories
+            columns:
+              - column:
+                  name: book_id
+                  valueNumeric: 101
+              - column:
+                  name: category_id
+                  valueNumeric: 101
