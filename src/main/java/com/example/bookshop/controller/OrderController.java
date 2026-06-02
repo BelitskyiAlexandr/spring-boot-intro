@@ -56,11 +56,19 @@ public class OrderController {
         return orderService.updateStatus(id, statusRequestDto);
     }
 
+    @GetMapping("/{orderId}")
+    @Operation(summary = "Order details", description = "Check the order details by id")
+    public OrderDto getOrder(@PathVariable Long orderId, @AuthenticationPrincipal User user) {
+        return orderService.getOrderById(orderId, user);
+    }
+
     @GetMapping("/{orderId}/items")
     @Operation(summary = "Get items from order",
                 description = "Retrieve all the items from the order")
-    public Page<OrderItemDto> getItemsByOrder(@PathVariable Long orderId, Pageable pageable) {
-        return orderService.getItemsByOrderId(orderId, pageable);
+    public Page<OrderItemDto> getItemsByOrder(@PathVariable Long orderId,
+                                              @AuthenticationPrincipal User user,
+                                              Pageable pageable) {
+        return orderService.getItemsByOrderId(orderId, user, pageable);
     }
 
     @GetMapping("/{orderId}/items/{itemId}")
