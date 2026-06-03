@@ -40,7 +40,7 @@ public class BookRepositoryTests {
     @Test
     @DisplayName("findAllByCategoryId must return an empty list for not existing category")
     void findAllByCategoryId_WithNonExistingCategory_ReturnEmptyList() {
-        Long nonExistingCategoryId = 100L;
+        Long nonExistingCategoryId = Long.MAX_VALUE;
         List<Book> result = bookRepository.findAllByCategoryId(nonExistingCategoryId);
         assertTrue(result.isEmpty());
     }
