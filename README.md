@@ -83,6 +83,45 @@ src
 ```
 
 ---
+## Getting Started
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/BelitskyiAlexandr/spring-boot-intro.git
+cd spring-boot-intro
+```
+
+### 2. Configure Environment Variables
+
+Create a `.env` file in the project root directory.
+
+Example `.env` file:
+
+```env
+MYSQL_ROOT_PASSWORD=bookshop_root_password
+MYSQL_DATABASE=bookshop_db
+MYSQL_USER=bookshop_user
+MYSQL_PASSWORD=bookshop_password
+
+MYSQL_LOCAL_PORT=3306
+MYSQL_DOCKER_PORT=3306
+
+SPRING_LOCAL_PORT=8080
+SPRING_DOCKER_PORT=8080
+
+DEBUG_PORT=5005
+```
+
+These variables are used by `docker-compose.yml` to configure MySQL, application ports, and remote debugging.
+
+For local development without Docker, database connection settings can also be configured in:
+
+```text
+src/main/resources/application.properties
+```
+
+---
 
 ## Running the Application
 
