@@ -81,6 +81,27 @@ src
 └── db
     └── changelog
 ```
+---
+
+## Entity Relationship Diagram (ERD)
+
+The diagram below illustrates the main database entities and relationships used by the application.
+
+![ERD](docs/ERD.png)
+
+The domain model consists of the following core entities:
+
+- **User** – application users and authentication data.
+- **Role** – user roles used for authorization.
+- **ShoppingCart** and **CartItem** – shopping cart functionality.
+- **Book** and **Category** – bookstore catalog.
+- **Order** and **OrderItem** – order management and purchase history.
+
+The model supports:
+- one-to-one relationships between users and shopping carts;
+- one-to-many relationships between users and orders;
+- many-to-many relationships between books and categories;
+- many-to-many relationships between users and roles.
 
 ---
 ## Getting Started
